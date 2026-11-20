@@ -1,0 +1,42 @@
+appId: pl.mlynek.pos
+productName: Młynek POS
+directories:
+  output: release
+asar: true
+npmRebuild: false
+afterPack: scripts/installer-files.mjs
+files:
+  - dist/**/*
+  - server/**/*
+  - desktop/**/*
+  - package.json
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: zip
+      arch: [x64]
+  icon: desktop/assets/icon.ico
+  signExecutable: false
+  requestedExecutionLevel: asInvoker
+  artifactName: Mlynek-POS-${version}-Windows-${arch}.${ext}
+nsis:
+  script: build/installer.nsi
+  oneClick: false
+  perMachine: false
+  allowElevation: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: Młynek POS
+  installerLanguages: [pl_PL]
+  language: '1045'
+  displayLanguageSelector: false
+  runAfterFinish: true
+  deleteAppDataOnUninstall: false
+  artifactName: Mlynek-POS-${version}-Windows-${arch}-Setup.${ext}
+linux:
+  target: dir
+  icon: desktop/assets/icon.png
+  category: Office
+  executableName: mlynek-pos

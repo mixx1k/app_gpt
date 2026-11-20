@@ -1,0 +1,97 @@
+name: Windows desktop
+
+on:
+  workflow_dispatch:
+    inputs:
+      attach_to_draft_release:
+        description: Attach tested installers to the existing draft release for this version
+        type: boolean
+        default: false
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    outputs:
+      release_tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read application version
+        id: version
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json | ConvertFrom-Json).version
+          "tag=v$version" >> $env:GITHUB_OUTPUT
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run desktop:install
+      - run: npm run check
+      - run: npm run test:desktop
+      - run: npm run dist:win
+      - name: Test packaged Windows application
+        shell: pwsh
+        run: |
+          $env:POS_PACKAGED_APP = (Resolve-Path 'release/win-unpacked/Młynek POS.exe').Path
+          npm run test:desktop
+          exit $LASTEXITCODE
+      - name: Test installer and preserve extra files on uninstall
+        shell: pwsh
+        run: |
+          $installer = (Get-ChildItem 'release/*-Setup.exe' | Select-Object -First 1).FullName
+          $installDirectory = Join-Path $env:RUNNER_TEMP 'mlynek-installed'
+          $process = Start-Process -FilePath $installer -ArgumentList @('/S', "/D=$installDirectory") -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
+          $env:POS_PACKAGED_APP = Join-Path $installDirectory 'Młynek POS.exe'
+          if (!(Test-Path $env:POS_PACKAGED_APP)) { throw 'Installed executable is missing' }
+          npm run test:desktop
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $userFile = Join-Path $installDirectory 'notatki-uzytkownika.txt'
+          Set-Content -Path $userFile -Value 'keep'
+          Start-Process -FilePath (Join-Path $installDirectory 'Uninstall.exe') -ArgumentList '/S' -Wait
+          for ($attempt = 0; $attempt -lt 30 -and (Test-Path $env:POS_PACKAGED_APP); $attempt++) { Start-Sleep -Seconds 1 }
+          if (Test-Path $env:POS_PACKAGED_APP) { throw 'Uninstaller did not remove the executable' }
+          if (!(Test-Path $userFile)) { throw 'Uninstaller removed an extra user file' }
+      - name: Prepare download instructions and checksums
+        shell: pwsh
+        run: |
+          Copy-Item WINDOWS.md release/INSTRUKCJA-WINDOWS.md
+          $lines = Get-ChildItem release/*.exe, release/*.zip | Sort-Object Name | ForEach-Object {
+            $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $($_.Name)"
+          }
+          $lines | Set-Content release/SHA256SUMS.txt -Encoding ascii
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Mlynek-POS-Windows-x64
+          compression-level: 0
+          if-no-files-found: error
+          path: |
+            release/*.exe
+            release/*.zip
+            release/SHA256SUMS.txt
+            release/INSTRUKCJA-WINDOWS.md
+
+  attach-draft-release:
+    if: github.event_name == 'workflow_dispatch' && inputs.attach_to_draft_release
+    needs: windows
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: Mlynek-POS-Windows-x64
+          path: release
+      - name: Attach files to the existing draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.windows.outputs.release_tag }}
+        run: |
+          test "$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft)" = true
+          gh release upload "$RELEASE_TAG" release/* --repo "$GITHUB_REPOSITORY"

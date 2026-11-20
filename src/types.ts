@@ -1,0 +1,51 @@
+export type Category = 'Kawa' | 'Wypieki' | 'Napoje' | 'Jedzenie';
+export type Product = {
+  id: number;
+  name: string;
+  category: Category;
+  priceCents: number;
+  vatRate: number;
+  stock: number;
+  active: boolean;
+};
+export type CartItem = { productId: number; quantity: number };
+export type Sale = {
+  id: number;
+  number: string;
+  createdAt: string;
+  status: 'completed' | 'voided';
+  voidedAt: string | null;
+  subtotalCents: number;
+  discountPercent: number;
+  discountCents: number;
+  totalCents: number;
+  vatCents: number;
+  paymentMethod: 'cash' | 'card';
+  cashReceivedCents: number | null;
+  changeCents: number;
+  orderType: 'dine_in' | 'takeaway';
+  tableNumber: number | null;
+  note: string;
+  items: {
+    productId: number;
+    name: string;
+    quantity: number;
+    unitPriceCents: number;
+    vatRate: number;
+    totalCents: number;
+    vatCents: number;
+    discountCents: number;
+  }[];
+};
+export type Checkout = {
+  requestId: string;
+  items: { productId: number; quantity: number; expectedPriceCents: number }[];
+  discountPercent: number;
+  paymentMethod: 'cash' | 'card';
+  cashReceivedCents: number | null;
+  orderType: 'dine_in' | 'takeaway';
+  tableNumber: number | null;
+  note: string;
+};
+export type Summary = { day: string; revenueCents: number; orders: number; averageCents: number };
+export type Movement = { quantity: number; reason: string; createdAt: string };
