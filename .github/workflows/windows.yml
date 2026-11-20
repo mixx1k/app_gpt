@@ -33,7 +33,16 @@ jobs:
       - run: npm run desktop:install
       - run: npm run check
       - run: npm run test:desktop
-      - run: npm run dist:win
+      - name: Build Windows downloads
+        shell: pwsh
+        run: |
+          npm run dist:win -- --publish never 2>&1 | Tee-Object -FilePath packaging.log
+          $buildExitCode = $LASTEXITCODE
+          if ($buildExitCode -ne 0) {
+            $detail = ((Get-Content packaging.log -Tail 80) -join "`n").Replace('%', '%25').Replace("`r", '%0D').Replace("`n", '%0A')
+            Write-Output "::error title=Windows packaging failed::$detail"
+            exit $buildExitCode
+          }
       - name: Test packaged Windows application
         shell: pwsh
         run: |
