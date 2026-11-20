@@ -2,7 +2,7 @@
 !include "MUI2.nsh"
 !include "LogicLib.nsh"
 !include "x64.nsh"
-!include "${PROJECT_DIR}/build/generated/installer-files.nsh"
+!include "${PROJECT_DIR}\build\generated\installer-files.nsh"
 
 Name "${PRODUCT_NAME}"
 InstallDir "$LOCALAPPDATA\Programs\Mlynek POS"
@@ -58,7 +58,7 @@ Section "Młynek POS"
   Call ValidateInstallDirectory
   SetOutPath "$INSTDIR"
   ClearErrors
-  File /r "${MLYNEK_APP_DIR}/*"
+  File /r "${MLYNEK_APP_DIR}\*"
   IfErrors 0 copied
     MessageBox MB_ICONSTOP "Nie udało się skopiować plików. Zamknij działający POS i uruchom instalator ponownie."
     Abort
