@@ -4,7 +4,9 @@ POS dla kawiarni w wersji desktopowej na **Windows 10/11 64-bit**: menu, koszyk,
 
 ## Aplikacja na PC
 
-Instalator i ZIP znajdują się w `release/`. Zainstalowany program działa we własnym oknie, ma własne środowisko Electron i bazę SQLite. Nie wymaga Node.js, przeglądarki, ręcznego uruchamiania serwera ani połączenia z Internetem. Szczegóły instalacji, danych i kopii: [WINDOWS.md](WINDOWS.md).
+**[Pobierz instalator Windows 10/11 (.exe, około 156 MB)](https://github.com/mixx1k/app_gpt/releases/download/v0.2.0/Mlynek-POS-0.2.0-Windows-x64-Setup.exe)** — pobranie nie wymaga logowania do GitHuba. Dostępna jest też [wersja ZIP bez instalacji](https://github.com/mixx1k/app_gpt/releases/download/v0.2.0/Mlynek-POS-0.2.0-Windows-x64.zip). To wersja demonstracyjna 0.2.0.
+
+Zainstalowany program działa we własnym oknie, ma własne środowisko Electron i bazę SQLite. Nie wymaga Node.js, przeglądarki, ręcznego uruchamiania serwera ani połączenia z Internetem. Szczegóły instalacji, danych i kopii: [WINDOWS.md](WINDOWS.md). Pliki z lokalnego budowania powstają w `release/`.
 
 Uruchomienie desktopu ze źródeł (Node.js 24):
 

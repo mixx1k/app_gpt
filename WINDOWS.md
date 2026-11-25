@@ -2,7 +2,7 @@
 
 ## Instalator
 
-1. Pobierz `Mlynek-POS-0.2.0-Windows-x64-Setup.exe`.
+1. Pobierz [Mlynek-POS-0.2.0-Windows-x64-Setup.exe](https://github.com/mixx1k/app_gpt/releases/download/v0.2.0/Mlynek-POS-0.2.0-Windows-x64-Setup.exe) (około 156 MB). Nie trzeba logować się do GitHuba.
 2. Uruchom instalator, wybierz folder i zakończ instalację. Nie wymaga konta administratora.
 3. Otwórz **Młynek POS** ze skrótu na pulpicie lub z menu Start.
 
@@ -10,7 +10,7 @@ Program zawiera własne środowisko wykonawcze. Nie trzeba instalować Node.js, 
 
 ## Wersja bez instalacji
 
-Rozpakuj **cały** plik `Mlynek-POS-0.2.0-Windows-x64.zip` do wybranego folderu i uruchom `Młynek POS.exe`. Wszystkie pliki z archiwum muszą pozostać razem. Nie uruchamiaj programu bezpośrednio z podglądu ZIP.
+Pobierz i rozpakuj **cały** plik [Mlynek-POS-0.2.0-Windows-x64.zip](https://github.com/mixx1k/app_gpt/releases/download/v0.2.0/Mlynek-POS-0.2.0-Windows-x64.zip) do wybranego folderu i uruchom `Młynek POS.exe`. Wszystkie pliki z archiwum muszą pozostać razem. Nie uruchamiaj programu bezpośrednio z podglądu ZIP.
 
 Wersja ZIP i zainstalowana aplikacja używają tego samego profilu danych na danym koncie Windows. Drugie uruchomienie przełącza do istniejącego okna.
 
